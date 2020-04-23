@@ -7,7 +7,12 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        pass
+        #256 bytes, each index is a byte
+        #8 general-purpose 8-bit numeric registers R0-R7.
+        #These registers only hold values between 0-255. After performing math on registers in the emulator, bitwise-AND the result with 0xFF (255) to keep the register values in that range.
+
+        self.ram = [0] * 256
+        self.register = [0] * 8        
 
     def load(self):
         """Load a program into memory."""

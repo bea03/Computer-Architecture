@@ -113,7 +113,8 @@ class CPU:
                 # 3 bytes long to move to next
                 self.pc += 3
 
-            # if PRN
+            # if PRN At this point, you should be able to run 
+            # the program and have it print 8 to the console!
             elif ir == PRN:
                 # save our MAR to a variable
                 reg_num = self.ram_read(self.pc + 1)

@@ -17,12 +17,16 @@ class CPU:
         """
         #Add list properties to the CPU class to hold 256 bytes of memory 
         self.memory = [0] * 256
+
         # and 8 general-purpose registers.
         self.registers = [0] * 8
+
         #Also add properties for any internal registers you need, e.g. PC
-        self.pc = 0 #counter for pc spot
+        #index of current instruction
+        self.pc = 0
         
-        self.running = True #is pc on
+        #is pc on
+        self.running = True
 
 
     def load(self):
@@ -86,4 +90,14 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        pass
+        while self.running:
+            """
+            It needs to read the memory address that's stored in register PC, 
+            and store that result in IR, the Instruction Register. 
+            This can just be a local variable in run().
+            """
+            ir = self.memory[self.pc]
+
+            else:
+                print(f'Unknown instruction {ir} at address {self.pc}')
+                sys.exit(1)

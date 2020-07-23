@@ -4,6 +4,27 @@ CPU Emulator
 Software that pretends to be hardware
 Turing complete--solve any problem for which there is an algorithm 
 (this only has 256 bytes of memory and is limited by it)
+
+1. The CALL instruction doesn't allow you to pass any arguments. 
+What are some ways to effectively get arguments to a subroutine?
+2. What's the result of bitwise-AND between `0b110` and `0b011`?
+3. Convert the 8-bit binary number 0bXXXXXXXX (PM's choice) to hex.
+
+Stack Main operations:
+
+   built in:
+PUSH -- Put on stack
+POP -- Take off top of stack
+
+   can be added by programmers:
+PEEK -- look at top item
+IS_EMPTY -- check if stack is empty
+
+Needed to implement the stack:
+* List -- a place to store the data (RAM or REG in LS8)
+        stack data stored in RAM because we only have 8 reg
+* Location in the list on top of stack
+        the location is the top of stack Register 7 initialized to 0xf4
 """
 
 import sys
@@ -14,7 +35,7 @@ HLT = 0b00000001  # HLT
 MUL = 0b10100010  # MUL R0,R1
 PUSH = 0b01000101  # PUSH R0
 POP = 0b01000110  # POP R0
-# Initialize and set default for our StackPointer
+# Init and set default for our StackPointer
 SP = 7
 
 class CPU:
@@ -28,10 +49,16 @@ class CPU:
         self.ram = [0] * 256
 
         # and 8 general-purpose registers.
-        self.reg = [0] * 8
-        
-        self.reg[SP] = 0xf4
+        # R5 is reserved as the interrupt mask (IM)
+        # R6 is reserved as the interrupt status (IS)
+        # R7 is reserved as the stack pointer (SP)
 
+        self.reg = [0] * 8
+
+        # The SP points at the value at the top of the stack (most recently pushed), 
+        # or at address F4 if the stack is empty.
+        # R7 is reserved as the stack pointer (SP)
+        self.sp = 7
         # Also add properties for any internal registers you need, e.g. PC
         # Program Counter, address of the currently executing instruction
         self.pc = 0
@@ -142,10 +169,16 @@ class CPU:
         self.pc += 3
 
     def push_fun(self, reg_a, reg_b):
-        pass
+        print("pop", reg_a, reg_b)
+        self.reg[self.sp] -= 1
+        self.ram_write(self.reg[reg_a], self.reg[self.sp])
+        self.pc += 2
 
     def pop_fun(self, reg_a, reg_b):
-        pass
+        print("pop", reg_a, reg_b)
+        self.reg[reg_a] = self.ram_read(self.reg[self.sp])
+        self.reg[self.sp] += 1
+        self.pc +=2
 
     def run(self):
         """Run the CPU."""
@@ -155,7 +188,7 @@ class CPU:
             
             reg_a = self.ram_read(self.pc + 1)
             reg_b = self.ram_read(self.pc + 2)
-            print("ir", ir, reg_a, reg_b)
+            # print("ir", ir, reg_a, reg_b)
             if ir in self.branch_table:
                 self.branch_table[ir](reg_a, reg_b)
                       

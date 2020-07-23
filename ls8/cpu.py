@@ -11,6 +11,7 @@ import sys
 LDI = 0b10000010  # LDI R0,8
 PRN = 0b01000111  # PRN R0
 HLT = 0b00000001  # HLT
+MUL = 0b10100010  # MUL R0,R1
 
 class CPU:
     """Main CPU class."""
@@ -19,17 +20,17 @@ class CPU:
         """
         Construct a new CPU.
         """
-        #Add list properties to the CPU class to hold 256 bytes of memory 
+        # Add list properties to the CPU class to hold 256 bytes of memory 
         self.ram = [0] * 256
 
         # and 8 general-purpose registers.
-        self.register = [0] * 8
+        self.reg = [0] * 8
 
-        #Also add properties for any internal registers you need, e.g. PC
-        #Program Counter, address of the currently executing instruction
+        # Also add properties for any internal registers you need, e.g. PC
+        # Program Counter, address of the currently executing instruction
         self.pc = 0
         
-        #is pc on
+        # is pc on
         self.running = True
 
     def load(self, filename):
@@ -39,11 +40,11 @@ class CPU:
             address = 0
 
             for line in f:
-                #get rid of comments in programs
+                # get rid of comments in programs
                 line = line.split('#')
 
                 try:
-                    #at line 0, get the value with base 2. default is base 10
+                    # at line 0, get the value with base 2. default is base 10
                     v = int(line[0], 2)
                 except ValueError:
                     continue
@@ -71,7 +72,12 @@ class CPU:
 
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
-        #elif op == "SUB": etc
+        elif op == "SUB":
+            self.reg[reg_a] -= self.reg[reg_b]
+        elif op == "MUL":
+            self.reg[reg_a] *= self.reg[reg_b]
+        elif op == "DIV":
+            self.reg[reg_a] /= self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -94,39 +100,39 @@ class CPU:
             print(" %02X" % self.reg[i], end='')
 
         print()
-    #Memory Address Register, holds the memory address we're reading or writing
-    #Memory Data Register, holds the value to write or the value just read
-    #ram_read() should accept the address to read and return the value stored there.
+    # Memory Address Register, holds the memory address we're reading or writing
+    # Memory Data Register, holds the value to write or the value just read
+    # ram_read() should accept the address to read and return the value stored there.
     def ram_read(self, mar):
         #current index of MAR
         mar_reg = self.ram[mar]
         return mar_reg
 
-    #ram_write() should accept a value to write, and the address to write it to
+    # ram_write() should accept a value to write, and the address to write it to
     def ram_write(self, mar, mdr):
-        #value at MAR
+        # value at MAR
         self.ram[mar] = mdr
 
-    def ldi_fun(self):
+    def ldi_fun(self, reg_a, reg_b):
         # if LDI This instruction sets a specified register to a specified value.
         # get next value one away
-        reg_num = self.ram_read(self.pc + 1)
+        # reg_num = self.ram_read(self.pc + 1)
         # get next value two away
-        reg_val = self.ram_read(self.pc + 2)
-        self.ram_write(reg_num, reg_val)
+        # reg_val = self.ram_read(self.pc + 2)
+        self.ram_write(reg_a, reg_b)
         # 3 bytes long to move to next
         self.pc += 3
 
-    def prn_fun(self):
+    def prn_fun(self, reg_a, reg_b):
         # if PRN At this point, you should be able to run 
         # the program and have it print 8 to the console!
         # save our MAR to a variable
-        reg_num = self.ram_read(self.pc + 1)
-        print(self.ram_read(reg_num))
+        # reg_num = self.ram_read(self.pc + 1)
+        print(self.ram_read(reg_a))
         # increment to the next command 2 bytes long
         self.pc += 2
 
-    def hlt_fun(self):
+    def hlt_fun(self, reg_a, reg_b):
         # if HLT We can consider HLT to be similar to Python's exit() 
         # in that we stop whatever we are doing, wherever we are.
         # 1 byte instruction
@@ -134,14 +140,31 @@ class CPU:
         # Set running to false
         self.running = False
 
+    def mul_fun(self, reg_a, reg_b):
+        # reg_a = self.ram_read(self.pc + 1)
+        # reg_b = self.ram_read(self.pc + 2)
+        self.alu("MUL", reg_a, reg_b)
+        self.pc += 3
+
     def run(self):
         """Run the CPU."""
         while self.running:
-            #Instruction Register, contains a copy of the currently executing instruction
+            # Instruction Register, contains a copy of the currently executing instruction
             ir = self.ram[self.pc]
-            print("ir", ir)
+            # print("ir", ir)
+            reg_a = self.ram_read(self.pc + 1)
+            reg_b = self.ram_read(self.pc + 2)
 
-       
+            branch_table = {
+                LDI: self.ldi_fun,
+                PRN: self.prn_fun,
+                HLT: self.hlt_fun,
+                MUL: self.mul_fun
+            }
+
+            if ir in branch_table:
+                branch_table[ir](reg_a, reg_b)
+                      
             else:
                 print(f'Unknown instruction {ir} at address {self.pc}')
                 sys.exit(1)

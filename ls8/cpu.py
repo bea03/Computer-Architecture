@@ -102,7 +102,7 @@ class CPU:
             #Instruction Register, contains a copy of the currently executing instruction
             ir = self.ram[self.pc]
 
-             # if LDI
+             # if LDI This instruction sets a specified register to a specified value.
             if ir == LDI:
                 # get next value one away
                 reg_num = self.ram_read(self.pc + 1)
@@ -122,7 +122,8 @@ class CPU:
                 # increment to the next command 2 bytes long
                 self.pc += 2
 
-            # if HLT
+            # if HLT We can consider HLT to be similar to Python's exit() 
+            # in that we stop whatever we are doing, wherever we are.
             elif ir == HLT:
                 # Set running to false
                 self.running = False

@@ -33,6 +33,13 @@ class CPU:
         # is pc on
         self.running = True
 
+        self.branch_table = {
+            LDI: self.ldi_fun,
+            PRN: self.prn_fun,
+            HLT: self.hlt_fun,
+            MUL: self.mul_fun
+        }
+
     def load(self, filename):
         """Load a program into memory."""
         
@@ -155,15 +162,9 @@ class CPU:
             reg_a = self.ram_read(self.pc + 1)
             reg_b = self.ram_read(self.pc + 2)
 
-            branch_table = {
-                LDI: self.ldi_fun,
-                PRN: self.prn_fun,
-                HLT: self.hlt_fun,
-                MUL: self.mul_fun
-            }
-
-            if ir in branch_table:
-                branch_table[ir](reg_a, reg_b)
+           
+            if ir in self.branch_table:
+                self.branch_table[ir](reg_a, reg_b)
                       
             else:
                 print(f'Unknown instruction {ir} at address {self.pc}')

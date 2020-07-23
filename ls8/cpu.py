@@ -19,7 +19,7 @@ class CPU:
         self.memory = [0] * 256
 
         # and 8 general-purpose registers.
-        self.registers = [0] * 8
+        self.register = [0] * 8
 
         #Also add properties for any internal registers you need, e.g. PC
         #Program Counter, address of the currently executing instruction
@@ -79,14 +79,18 @@ class CPU:
             print(" %02X" % self.reg[i], end='')
 
         print()
-
+    #Memory Address Register, holds the memory address we're reading or writing
+    #Memory Data Register, holds the value to write or the value just read
     #ram_read() should accept the address to read and return the value stored there.
-    def ram_read(self):
-        pass
+    def ram_read(self, mar):
+        #current index of MAR
+        mar_reg = self.memory[mar]
+        return mar_reg
 
     #ram_write() should accept a value to write, and the address to write it to
-    def ram_write(self):
-        pass
+    def ram_write(self, mar, mdr):
+        #value at MAR
+        self.memory[mar] = mdr
 
     def run(self):
         """Run the CPU."""

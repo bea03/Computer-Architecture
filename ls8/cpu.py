@@ -48,6 +48,18 @@ class CPU:
             POP: self.pop_fun
         }
 
+    # mar == Memory Address Register, holds the memory address we're reading or writing
+    # mdr == Memory Data Register, holds the value to write or the value just read
+    # ram_read() should accept the address to read and return the value stored there.
+    def ram_read(self, mar):
+        #current index of MAR
+        return self.ram[mar]
+
+    # ram_write() should accept a value to write, and the address to write it to
+    def ram_write(self, mar, mdr):
+        # mdr value at MAR
+        self.ram[mar] = mdr
+
     def load(self, filename):
         """Load a program into memory."""
         
@@ -67,20 +79,6 @@ class CPU:
                 self.ram[address] = v
 
                 address += 1
-        # For now, we've just hardcoded a program:
-        # program = [
-        #     # From print8.ls8
-        #     0b10000010, # LDI R0,8  save register 3 bytes long
-        #     0b00000000,
-        #     0b00001000,
-        #     0b01000111, # PRN R0
-        #     0b00000000,
-        #     0b00000001, # HLT
-        # ]
-
-        # for instruction in program:
-        #     self.ram[address] = instruction
-        #     address += 1
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
@@ -115,35 +113,17 @@ class CPU:
             print(" %02X" % self.reg[i], end='')
 
         print()
-    # Memory Address Register, holds the memory address we're reading or writing
-    # Memory Data Register, holds the value to write or the value just read
-    # ram_read() should accept the address to read and return the value stored there.
-    def ram_read(self, mar):
-        #current index of MAR
-        mar_reg = self.ram[mar]
-        return mar_reg
-
-    # ram_write() should accept a value to write, and the address to write it to
-    def ram_write(self, mar, mdr):
-        # value at MAR
-        self.ram[mar] = mdr
-
+    
     def ldi_fun(self, reg_a, reg_b):
         # if LDI This instruction sets a specified register to a specified value.
-        # get next value one away
-        # reg_num = self.ram_read(self.pc + 1)
-        # get next value two away
-        # reg_val = self.ram_read(self.pc + 2)
-        self.ram_write(reg_a, reg_b)
+        self.reg[reg_a] = reg_b
         # 3 bytes long to move to next
         self.pc += 3
 
     def prn_fun(self, reg_a, reg_b):
         # if PRN At this point, you should be able to run 
         # the program and have it print 8 to the console!
-        # save our MAR to a variable
-        # reg_num = self.ram_read(self.pc + 1)
-        print(self.ram_read(reg_a))
+        print(f'Print this: {self.reg[reg_a]}')
         # increment to the next command 2 bytes long
         self.pc += 2
 
@@ -156,8 +136,6 @@ class CPU:
         self.running = False
 
     def mul_fun(self, reg_a, reg_b):
-        # reg_a = self.ram_read(self.pc + 1)
-        # reg_b = self.ram_read(self.pc + 2)
         #Note: MUL is the responsiblity of the ALU, so it would be nice if your 
         # code eventually called the alu() function with appropriate arguments to get the work done.
         self.alu("MUL", reg_a, reg_b)
@@ -174,10 +152,10 @@ class CPU:
         while self.running:
             # Instruction Register, contains a copy of the currently executing instruction
             ir = self.ram[self.pc]
-            # print("ir", ir)
+            
             reg_a = self.ram_read(self.pc + 1)
             reg_b = self.ram_read(self.pc + 2)
-
+            print("ir", ir, reg_a, reg_b)
             if ir in self.branch_table:
                 self.branch_table[ir](reg_a, reg_b)
                       

@@ -8,6 +8,10 @@ Turing complete--solve any problem for which there is an algorithm
 
 import sys
 
+LDI = 0b10000010  # LDI R0,8
+PRN = 0b01000111  # PRN R0
+HLT = 0b00000001  # HLT
+
 class CPU:
     """Main CPU class."""
 
@@ -16,7 +20,7 @@ class CPU:
         Construct a new CPU.
         """
         #Add list properties to the CPU class to hold 256 bytes of memory 
-        self.memory = [0] * 256
+        self.ram = [0] * 256
 
         # and 8 general-purpose registers.
         self.register = [0] * 8
@@ -84,19 +88,45 @@ class CPU:
     #ram_read() should accept the address to read and return the value stored there.
     def ram_read(self, mar):
         #current index of MAR
-        mar_reg = self.memory[mar]
+        mar_reg = self.ram[mar]
         return mar_reg
 
     #ram_write() should accept a value to write, and the address to write it to
     def ram_write(self, mar, mdr):
         #value at MAR
-        self.memory[mar] = mdr
+        self.ram[mar] = mdr
 
     def run(self):
         """Run the CPU."""
         while self.running:
             #Instruction Register, contains a copy of the currently executing instruction
-            ir = self.memory[self.pc]
+            ir = self.ram[self.pc]
+
+             # if LDI
+            if ir == LDI:
+                # get next value one away
+                reg_num = self.ram_read(self.pc + 1)
+                # get next value two away
+                reg_val = self.ram_read(self.pc + 2)
+                
+                self.ram_write(reg_num, reg_val)
+                # 3 bytes long to move to next
+                self.pc += 3
+
+            # if PRN
+            elif ir == PRN:
+                # save our MAR to a variable
+                reg_num = self.ram_read(self.pc + 1)
+                print(self.ram_read(reg_num))
+                # increment to the next command 2 bytes long
+                self.pc += 2
+
+            # if HLT
+            elif ir == HLT:
+                # Set running to false
+                self.running = False
+                # 1 byte instruction
+                self.pc += 1
 
             else:
                 print(f'Unknown instruction {ir} at address {self.pc}')

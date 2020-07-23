@@ -32,19 +32,18 @@ class CPU:
         #is pc on
         self.running = True
 
-
     def load(self, filename):
         """Load a program into memory."""
         
         with open(filename) as f:
             address = 0
-            
+
             for line in f:
                 #get rid of comments in programs
                 line = line.split('#')
 
                 try:
-                    #at line 0, get the value with base 2
+                    #at line 0, get the value with base 2. default is base 10
                     v = int(line[0], 2)
                 except ValueError:
                     continue
@@ -66,7 +65,6 @@ class CPU:
         # for instruction in program:
         #     self.ram[address] = instruction
         #     address += 1
-
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
@@ -109,40 +107,41 @@ class CPU:
         #value at MAR
         self.ram[mar] = mdr
 
+    def ldi_fun(self):
+        # if LDI This instruction sets a specified register to a specified value.
+        # get next value one away
+        reg_num = self.ram_read(self.pc + 1)
+        # get next value two away
+        reg_val = self.ram_read(self.pc + 2)
+        self.ram_write(reg_num, reg_val)
+        # 3 bytes long to move to next
+        self.pc += 3
+
+    def prn_fun(self):
+        # if PRN At this point, you should be able to run 
+        # the program and have it print 8 to the console!
+        # save our MAR to a variable
+        reg_num = self.ram_read(self.pc + 1)
+        print(self.ram_read(reg_num))
+        # increment to the next command 2 bytes long
+        self.pc += 2
+
+    def hlt_fun(self):
+        # if HLT We can consider HLT to be similar to Python's exit() 
+        # in that we stop whatever we are doing, wherever we are.
+        # 1 byte instruction
+        self.pc += 1
+        # Set running to false
+        self.running = False
+
     def run(self):
         """Run the CPU."""
         while self.running:
             #Instruction Register, contains a copy of the currently executing instruction
             ir = self.ram[self.pc]
+            print("ir", ir)
 
-             # if LDI This instruction sets a specified register to a specified value.
-            if ir == LDI:
-                # get next value one away
-                reg_num = self.ram_read(self.pc + 1)
-                # get next value two away
-                reg_val = self.ram_read(self.pc + 2)
-                
-                self.ram_write(reg_num, reg_val)
-                # 3 bytes long to move to next
-                self.pc += 3
-
-            # if PRN At this point, you should be able to run 
-            # the program and have it print 8 to the console!
-            elif ir == PRN:
-                # save our MAR to a variable
-                reg_num = self.ram_read(self.pc + 1)
-                print(self.ram_read(reg_num))
-                # increment to the next command 2 bytes long
-                self.pc += 2
-
-            # if HLT We can consider HLT to be similar to Python's exit() 
-            # in that we stop whatever we are doing, wherever we are.
-            elif ir == HLT:
-                # Set running to false
-                self.running = False
-                # 1 byte instruction
-                self.pc += 1
-
+       
             else:
                 print(f'Unknown instruction {ir} at address {self.pc}')
                 sys.exit(1)

@@ -1,4 +1,10 @@
-"""CPU functionality."""
+"""
+CPU functionality.
+CPU Emulator
+Software that pretends to be hardware
+Turing complete--solve any problem for which there is an algorithm 
+(this only has 256 bytes of memory and is limited by it)
+"""
 
 import sys
 
@@ -6,13 +12,18 @@ class CPU:
     """Main CPU class."""
 
     def __init__(self):
-        """Construct a new CPU."""
-        self.ram = [0] * 256
-        self.reg = [0] * 8
+        """
+        Construct a new CPU.
+        """
+        #Add list properties to the CPU class to hold 256 bytes of memory 
+        self.memory = [0] * 256
+        # and 8 general-purpose registers.
+        self.registers = [0] * 8
+        #Also add properties for any internal registers you need, e.g. PC
         self.pc = 0 #counter for pc spot
         
-        self.running = False #is pc on
-        
+        self.running = True #is pc on
+
 
     def load(self):
         """Load a program into memory."""
@@ -64,6 +75,14 @@ class CPU:
             print(" %02X" % self.reg[i], end='')
 
         print()
+
+    #ram_read() should accept the address to read and return the value stored there.
+    def ram_read(self):
+        pass
+
+    #ram_write() should accept a value to write, and the address to write it to
+    def ram_write(self):
+        pass
 
     def run(self):
         """Run the CPU."""

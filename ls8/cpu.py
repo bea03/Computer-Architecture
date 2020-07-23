@@ -35,8 +35,7 @@ HLT = 0b00000001  # HLT
 MUL = 0b10100010  # MUL R0,R1
 PUSH = 0b01000101  # PUSH R0
 POP = 0b01000110  # POP R0
-# Init and set default for our StackPointer
-SP = 7
+
 
 class CPU:
     """Main CPU class."""
@@ -96,6 +95,7 @@ class CPU:
             for line in f:
                 # get rid of comments in programs
                 line = line.split('#')
+                number_string = line[0].strip()
 
                 try:
                     # at line 0, get the value with base 2. default is base 10
@@ -170,15 +170,19 @@ class CPU:
 
     def push_fun(self, reg_a, reg_b):
         print("pop", reg_a, reg_b)
+        # decrement the SP
         self.reg[self.sp] -= 1
-        self.ram_write(self.reg[reg_a], self.reg[self.sp])
+        #copy the value in the given register to the address pointed to by SP
+        self.ram[self.reg[self.sp]] = self.reg[reg_a]
         self.pc += 2
 
     def pop_fun(self, reg_a, reg_b):
         print("pop", reg_a, reg_b)
-        self.reg[reg_a] = self.ram_read(self.reg[self.sp])
+        #copy the value from the address pointed to by SP to the given reg
+        self.reg[reg_a] = self.ram[self.reg[self.sp]]
+        #increment SP
         self.reg[self.sp] += 1
-        self.pc +=2
+        self.pc += 2
 
     def run(self):
         """Run the CPU."""

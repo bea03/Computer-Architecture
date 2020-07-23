@@ -22,7 +22,7 @@ class CPU:
         self.registers = [0] * 8
 
         #Also add properties for any internal registers you need, e.g. PC
-        #index of current instruction
+        #Program Counter, address of the currently executing instruction
         self.pc = 0
         
         #is pc on
@@ -38,7 +38,7 @@ class CPU:
 
         program = [
             # From print8.ls8
-            0b10000010, # LDI R0,8
+            0b10000010, # LDI R0,8  save register 3 bytes long
             0b00000000,
             0b00001000,
             0b01000111, # PRN R0
@@ -91,11 +91,7 @@ class CPU:
     def run(self):
         """Run the CPU."""
         while self.running:
-            """
-            It needs to read the memory address that's stored in register PC, 
-            and store that result in IR, the Instruction Register. 
-            This can just be a local variable in run().
-            """
+            #Instruction Register, contains a copy of the currently executing instruction
             ir = self.memory[self.pc]
 
             else:

@@ -35,21 +35,23 @@ class CPU:
 
     def load(self, filename):
         """Load a program into memory."""
-        try:
+        
+        with open(filename) as f:
             address = 0
             
-            with open(filename) as f:
-                for line in f:
-                    comment_split = line.split('#')
-                    num = comment_split[0].strip()
-                    if num == "":
-                        continue
-                    value = int(num, 2)
-                    self.ram_write(address, value)
-                    address += 1
+            for line in f:
+                #get rid of comments in programs
+                line = line.split('#')
 
-        except FileNotFoundError:
-            print(f"{sys.arg[0]}: {sys.arg[1]} not found")
+                try:
+                    #at line 0, get the value with base 2
+                    v = int(line[0], 2)
+                except ValueError:
+                    continue
+
+                self.ram[address] = v
+
+                address += 1
         # For now, we've just hardcoded a program:
         # program = [
         #     # From print8.ls8

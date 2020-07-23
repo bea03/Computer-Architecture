@@ -12,6 +12,10 @@ LDI = 0b10000010  # LDI R0,8
 PRN = 0b01000111  # PRN R0
 HLT = 0b00000001  # HLT
 MUL = 0b10100010  # MUL R0,R1
+PUSH = 0b01000101  # PUSH R0
+POP = 0b01000110  # POP R0
+# Initialize and set default for our StackPointer
+SP = 7
 
 class CPU:
     """Main CPU class."""
@@ -25,6 +29,8 @@ class CPU:
 
         # and 8 general-purpose registers.
         self.reg = [0] * 8
+        
+        self.reg[SP] = 0xf4
 
         # Also add properties for any internal registers you need, e.g. PC
         # Program Counter, address of the currently executing instruction
@@ -37,7 +43,9 @@ class CPU:
             LDI: self.ldi_fun,
             PRN: self.prn_fun,
             HLT: self.hlt_fun,
-            MUL: self.mul_fun
+            MUL: self.mul_fun,
+            PUSH: self.push_fun,
+            POP: self.pop_fun
         }
 
     def load(self, filename):
@@ -154,6 +162,12 @@ class CPU:
         # code eventually called the alu() function with appropriate arguments to get the work done.
         self.alu("MUL", reg_a, reg_b)
         self.pc += 3
+
+    def push_fun(self, reg_a, reg_b):
+        pass
+
+    def pop_fun(self, reg_a, reg_b):
+        pass
 
     def run(self):
         """Run the CPU."""

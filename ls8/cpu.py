@@ -150,6 +150,8 @@ class CPU:
     def mul_fun(self, reg_a, reg_b):
         # reg_a = self.ram_read(self.pc + 1)
         # reg_b = self.ram_read(self.pc + 2)
+        #Note: MUL is the responsiblity of the ALU, so it would be nice if your 
+        # code eventually called the alu() function with appropriate arguments to get the work done.
         self.alu("MUL", reg_a, reg_b)
         self.pc += 3
 
@@ -162,7 +164,6 @@ class CPU:
             reg_a = self.ram_read(self.pc + 1)
             reg_b = self.ram_read(self.pc + 2)
 
-           
             if ir in self.branch_table:
                 self.branch_table[ir](reg_a, reg_b)
                       

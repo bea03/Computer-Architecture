@@ -5,11 +5,6 @@ Software that pretends to be hardware
 Turing complete--solve any problem for which there is an algorithm 
 (this only has 256 bytes of memory and is limited by it)
 
-1. The CALL instruction doesn't allow you to pass any arguments. 
-What are some ways to effectively get arguments to a subroutine?
-2. What's the result of bitwise-AND between `0b110` and `0b011`?
-3. Convert the 8-bit binary number 0bXXXXXXXX (PM's choice) to hex.
-
 Stack Main operations:
 
    built in:
@@ -25,7 +20,32 @@ Needed to implement the stack:
         stack data stored in RAM because we only have 8 reg
 * Location in the list on top of stack
         the location is the top of stack Register 7 initialized to 0xf4
+
+
+When you call:
+    Push the return add on the stack
+    Set the PC to add of subroutine
+
+When return:
+    Pop return add off stack
+    store it in PC
 """
+
+'''
+SPRINT QUESTIONS:
+
+1. The CALL instruction doesn't allow you to pass any arguments. 
+What are some ways to effectively get arguments to a subroutine?
+    
+    used the self.pc when defining the CPU class. all children have access to the parent class.
+
+2. What's the result of bitwise-AND between `0b110` and `0b011`?
+
+    Does a “bitwise and“. Each bit of the output is 1 if the corresponding bit of 
+    a AND of b is 1(true), otherwise it’s 0(false).
+
+3. Convert the 8-bit binary number 0bXXXXXXXX (PM's choice) to hex.
+'''
 
 import sys
 

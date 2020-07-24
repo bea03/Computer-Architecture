@@ -253,7 +253,7 @@ class CPU:
 
     def jmp_fun(self, reg_a, reg_b):
         # Jump to the address stored in the given register.
-        reg_num = self.ram_read(reg_a)
+        reg_num = self.ram_read(self.pc + 1)
         # Set the `PC` to the address stored in the given register
         self.pc = self.reg[reg_num]
 

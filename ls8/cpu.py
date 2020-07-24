@@ -29,6 +29,7 @@ POP = 0b01000110  # POP R0
 CALL = 0b01010000  # CALL R1
 RET = 0b00010001  # RET
 ADD = 0b10100000 #ADD
+# sprint
 CMP = 0b10100111  # CMP
 JEQ = 0b01010101  # JEQ
 JMP = 0b01010100  # JMP
@@ -72,6 +73,7 @@ class CPU:
             CALL: self.call_fun,
             RET: self.ret_fun,
             ADD: self.add_fun,
+            # sprint
             CPM: self.cpm_fun,
             JEQ: self.jeq_fun,
             JMP: self.jmp_fun,
@@ -210,6 +212,18 @@ class CPU:
         self.reg[self.sp] += 1
         # and store it in the PC.
         self.pc = return_address
+
+    def cmp_fun(self, reg_a, reg_b):
+        pass
+
+    def jeq_fun(self, reg_a, reg_b):
+        pass
+
+    def jmp_fun(self, reg_a, reg_b):
+        pass
+
+    def jne_fun(self, reg_a, reg_b):
+        pass
 
     def run(self):
         """Run the CPU."""

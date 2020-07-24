@@ -246,9 +246,9 @@ class CPU:
 
     def jmp_fun(self, reg_a, reg_b):
         # Jump to the address stored in the given register.
-
+        reg_num = self.ram_read(reg_a)
         # Set the `PC` to the address stored in the given register
-        pass
+        self.pc = self.reg[reg_num]
 
     def jne_fun(self, reg_a, reg_b):
         # If `E` flag is clear (false, 0), jump to the address stored in the given register

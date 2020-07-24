@@ -169,7 +169,7 @@ class CPU:
         self.pc += 3
 
     def push_fun(self, reg_a, reg_b):
-        print("pop", reg_a, reg_b)
+        # print("pop", reg_a, reg_b)
         # decrement the SP
         self.reg[self.sp] -= 1
         #copy the value in the given register to the address pointed to by SP
@@ -177,7 +177,7 @@ class CPU:
         self.pc += 2
 
     def pop_fun(self, reg_a, reg_b):
-        print("pop", reg_a, reg_b)
+        # print("pop", reg_a, reg_b)
         #copy the value from the address pointed to by SP to the given reg
         self.reg[reg_a] = self.ram[self.reg[self.sp]]
         #increment SP

@@ -35,6 +35,8 @@ HLT = 0b00000001  # HLT
 MUL = 0b10100010  # MUL R0,R1
 PUSH = 0b01000101  # PUSH R0
 POP = 0b01000110  # POP R0
+CALL = 0b01010000  # CALL R1
+RET = 0b00010001  # RET
 
 
 class CPU:
@@ -71,7 +73,9 @@ class CPU:
             HLT: self.hlt_fun,
             MUL: self.mul_fun,
             PUSH: self.push_fun,
-            POP: self.pop_fun
+            POP: self.pop_fun,
+            CALL: self.call_fun,
+            RET: self.ret_fun
         }
 
     # mar == Memory Address Register, holds the memory address we're reading or writing
@@ -183,6 +187,12 @@ class CPU:
         #increment SP
         self.reg[self.sp] += 1
         self.pc += 2
+
+    def call_fun(self, reg_a, reg_b):
+        pass
+
+    def ret_fun(self, reg_a, reg_b):
+        pass
 
     def run(self):
         """Run the CPU."""

@@ -52,14 +52,20 @@ class CPU:
         # R7 is reserved as the stack pointer (SP)
         self.reg = [0] * 8
         self.reg[7] = 0xf4
+        
         # The SP points at the value at the top of the stack (most recently pushed), 
         # or at address F4 if the stack is empty.
         # R7 is reserved as the stack pointer (SP)
         self.sp = 7
+
         # Also add properties for any internal registers you need, e.g. PC
         # Program Counter, address of the currently executing instruction
         self.pc = 0
-        
+
+        # he flags register `FL` holds the current flags status. These flags
+        # can change based on the operands given to the `CMP` opcode.
+        self.flag = 0b00000000
+
         # is pc on
         self.running = True
 
@@ -77,7 +83,7 @@ class CPU:
             CPM: self.cpm_fun,
             JEQ: self.jeq_fun,
             JMP: self.jmp_fun,
-            JNE: self.jne
+            JNE: self.jne_fun
         }
 
     # mar == Memory Address Register, holds the memory address we're reading or writing

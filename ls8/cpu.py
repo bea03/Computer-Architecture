@@ -25,6 +25,7 @@ What are some ways to effectively get arguments to a subroutine?
     -Hexadecimal numbers can be 0-9, or A (10) - F (15), since hexadecimal is base-16 8,4,2,1
     -split into sequences of 4 bits
 
+0000  1010 = 0 + 0 + 2 + 0 + 8 0A
 To run test for sprint:
     python3 ls8.py examples/sctest.ls8
 '''

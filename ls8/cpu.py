@@ -81,7 +81,7 @@ class CPU:
             RET: self.ret_fun,
             ADD: self.add_fun,
             # sprint
-            CPM: self.cpm_fun,
+            CMP: self.cmp_fun,
             JEQ: self.jeq_fun,
             JMP: self.jmp_fun,
             JNE: self.jne_fun

@@ -58,6 +58,10 @@ POP = 0b01000110  # POP R0
 CALL = 0b01010000  # CALL R1
 RET = 0b00010001  # RET
 ADD = 0b10100000 #ADD
+CMP = 0b10100111  # CMP
+JEQ = 0b01010101  # JEQ
+JMP = 0b01010100  # JMP
+JNE = 0b01010110  # JNE
 
 
 class CPU:
@@ -96,7 +100,11 @@ class CPU:
             POP: self.pop_fun,
             CALL: self.call_fun,
             RET: self.ret_fun,
-            ADD: self.add_fun
+            ADD: self.add_fun,
+            CPM: self.cpm_fun,
+            JEQ: self.jeq_fun,
+            JMP: self.jmp_fun,
+            JNE: self.jne
         }
 
     # mar == Memory Address Register, holds the memory address we're reading or writing

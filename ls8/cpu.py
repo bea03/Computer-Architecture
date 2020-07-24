@@ -37,6 +37,7 @@ PUSH = 0b01000101  # PUSH R0
 POP = 0b01000110  # POP R0
 CALL = 0b01010000  # CALL R1
 RET = 0b00010001  # RET
+ADD = 0b10100000 #ADD
 
 
 class CPU:
@@ -53,9 +54,8 @@ class CPU:
         # R5 is reserved as the interrupt mask (IM)
         # R6 is reserved as the interrupt status (IS)
         # R7 is reserved as the stack pointer (SP)
-
         self.reg = [0] * 8
-
+        self.reg[7] = 0xf4
         # The SP points at the value at the top of the stack (most recently pushed), 
         # or at address F4 if the stack is empty.
         # R7 is reserved as the stack pointer (SP)
@@ -75,7 +75,8 @@ class CPU:
             PUSH: self.push_fun,
             POP: self.pop_fun,
             CALL: self.call_fun,
-            RET: self.ret_fun
+            RET: self.ret_fun,
+            ADD: self.add_fun
         }
 
     # mar == Memory Address Register, holds the memory address we're reading or writing
@@ -92,24 +93,23 @@ class CPU:
 
     def load(self, filename):
         """Load a program into memory."""
-        
-        with open(filename) as f:
-            address = 0
+        try:
+            with open(filename) as f:
+                address = 0
+                for line in f:
+                    # get rid of comments in programs
+                    line = line.split('#')
+                    num_str = line[0].strip()
 
-            for line in f:
-                # get rid of comments in programs
-                line = line.split('#')
-                number_string = line[0].strip()
-
-                try:
+                    if num_str == "":
+                        continue
                     # at line 0, get the value with base 2. default is base 10
-                    v = int(line[0], 2)
-                except ValueError:
-                    continue
-
-                self.ram[address] = v
-
-                address += 1
+                    v = int(num_str, 2)
+                    self.ram[address] = v
+                    address += 1
+        
+        except FileNotFoundError:
+            sys.exit(2)
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
@@ -172,6 +172,10 @@ class CPU:
         self.alu("MUL", reg_a, reg_b)
         self.pc += 3
 
+    def add_fun(self, reg_a, reg_b):
+        self.alu("ADD", reg_a, reg_b)
+        self.pc += 3
+
     def push_fun(self, reg_a, reg_b):
         # print("pop", reg_a, reg_b)
         # decrement the SP
@@ -189,10 +193,24 @@ class CPU:
         self.pc += 2
 
     def call_fun(self, reg_a, reg_b):
-        pass
+        return_add = reg_b
+        # decrement the SP
+        self.reg[self.sp] -= 1
+        # The address of the instruction directly after CALL is pushed onto the stack. 
+        # This allows us to return to where we left off when the subroutine finishes executing.
+        self.ram[self.reg[self.sp]] = return_add
+        # The PC is set to the address stored in the given register. 
+        reg_num = self.ram[reg_a]
+        sub_add = self.reg[reg_num]
+        self.pc = sub_add
 
     def ret_fun(self, reg_a, reg_b):
-        pass
+        # Return from subroutine.
+        return_address = self.ram[self.reg[self.sp]]
+        # Pop the value from the top of the stack
+        self.reg[self.sp] += 1
+        # and store it in the PC.
+        self.pc = return_address
 
     def run(self):
         """Run the CPU."""

@@ -8,7 +8,8 @@ SPRINT QUESTIONS:
 1. The CALL instruction doesn't allow you to pass any arguments. 
 What are some ways to effectively get arguments to a subroutine?
     
-    used the self.pc when defining the CPU class. all children have access to the parent class.
+    used the self.pc when defining the CPU class. all children have access to the parent class. Also used other functions
+    that can take arguments inside the CALL function to get values from other places
 
 2. What's the result of bitwise-AND between `0b110` and `0b011`?
 
@@ -241,8 +242,14 @@ class CPU:
         self.pc += 3
 
     def jeq_fun(self, reg_a, reg_b):
-        # If `equal` flag is set (true), jump to the address stored in the given register
-        pass
+        #get the reg_num
+        reg_num = self.ram_read(self.pc + 1)
+        # If `equal` flag is set (true), 
+        if self.flag & 0b00000001 == 1:
+        # jump to the address stored in the given register
+            self.pc = self.reg[reg_num]
+        else:
+            self.pc += 2
 
     def jmp_fun(self, reg_a, reg_b):
         # Jump to the address stored in the given register.
@@ -251,8 +258,14 @@ class CPU:
         self.pc = self.reg[reg_num]
 
     def jne_fun(self, reg_a, reg_b):
-        # If `E` flag is clear (false, 0), jump to the address stored in the given register
-        pass
+        #get the reg_num
+        reg_num = self.ram_read(self.pc + 1)
+        # If `E` flag is clear (false, 0), 
+        if self.flag & 0b00000001 == 0:
+            # jump to the address stored in the given register
+            self.pc = self.reg[reg_num]
+        else:
+            self.pc += 2
 
     def run(self):
         """Run the CPU."""

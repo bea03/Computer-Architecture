@@ -193,14 +193,14 @@ class CPU:
         self.pc += 2
 
     def call_fun(self, reg_a, reg_b):
-        return_add = reg_b
+        return_add = self.pc + 2
         # decrement the SP
         self.reg[self.sp] -= 1
         # The address of the instruction directly after CALL is pushed onto the stack. 
         # This allows us to return to where we left off when the subroutine finishes executing.
         self.ram[self.reg[self.sp]] = return_add
         # The PC is set to the address stored in the given register. 
-        reg_num = self.ram[reg_a]
+        reg_num = self.ram[self.pc + 1]
         sub_add = self.reg[reg_num]
         self.pc = sub_add
 

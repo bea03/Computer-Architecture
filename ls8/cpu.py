@@ -52,7 +52,7 @@ class CPU:
         # R7 is reserved as the stack pointer (SP)
         self.reg = [0] * 8
         self.reg[7] = 0xf4
-        
+
         # The SP points at the value at the top of the stack (most recently pushed), 
         # or at address F4 if the stack is empty.
         # R7 is reserved as the stack pointer (SP)
@@ -129,6 +129,20 @@ class CPU:
             self.reg[reg_a] *= self.reg[reg_b]
         elif op == "DIV":
             self.reg[reg_a] /= self.reg[reg_b]
+
+        elif op == "CMP":
+            # If they are equal, set the Equal `E` flag to 1, otherwise set it to 0.
+            if self.reg[reg_a] == self.reg[reg_b]:
+                self.flag = 0b00000001 #HLT
+            # If registerA is less than registerB, set the Less-than `L` flag to 1,
+            # otherwise set it to 0.
+            elif self.reg[reg_a] < self.reg[reg_b]:
+                self.flag = 0b00000100
+            #  If registerA is greater than registerB, set the Greater-than `G` flag
+            # to 1, otherwise set it to 0
+            elif self.reg[reg_a] > self.reg[reg_b]:
+                self.flag = 0b00000010
+
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -220,15 +234,24 @@ class CPU:
         self.pc = return_address
 
     def cmp_fun(self, reg_a, reg_b):
-        pass
+        # Compare the values in two registers
+        # This is handled by ALU with flags
+        self.alu("CMP", reg_a, reg_b)
+        #3bit instruction
+        self.pc += 3
 
     def jeq_fun(self, reg_a, reg_b):
+        # If `equal` flag is set (true), jump to the address stored in the given register
         pass
 
     def jmp_fun(self, reg_a, reg_b):
+        # Jump to the address stored in the given register.
+
+        # Set the `PC` to the address stored in the given register
         pass
 
     def jne_fun(self, reg_a, reg_b):
+        # If `E` flag is clear (false, 0), jump to the address stored in the given register
         pass
 
     def run(self):

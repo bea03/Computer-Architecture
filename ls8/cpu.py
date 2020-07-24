@@ -1,34 +1,5 @@
 """
 CPU functionality.
-CPU Emulator
-Software that pretends to be hardware
-Turing complete--solve any problem for which there is an algorithm 
-(this only has 256 bytes of memory and is limited by it)
-
-Stack Main operations:
-
-   built in:
-PUSH -- Put on stack
-POP -- Take off top of stack
-
-   can be added by programmers:
-PEEK -- look at top item
-IS_EMPTY -- check if stack is empty
-
-Needed to implement the stack:
-* List -- a place to store the data (RAM or REG in LS8)
-        stack data stored in RAM because we only have 8 reg
-* Location in the list on top of stack
-        the location is the top of stack Register 7 initialized to 0xf4
-
-
-When you call:
-    Push the return add on the stack
-    Set the PC to add of subroutine
-
-When return:
-    Pop return add off stack
-    store it in PC
 """
 
 '''
